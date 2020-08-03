@@ -1,0 +1,77 @@
+<xar:comment> License: GPL http://www.gnu.org/copyleft/gpl.html </xar:comment>
+<div class="xar-mod-page">
+    <div class="xar-mod-head">
+        <xar:if condition="!xarRequestIsAJAX()">
+            <xar:template type="module" module="base" file="admin-menu" />
+        </xar:if>
+    </div>
+    <div class="xar-mod-body">
+        <h1><xar:mlstring>Clear cache files</xar:mlstring></h1>
+        <div class="xar-mod-content">
+            <xar:if condition="$delfin eq false">
+                <xar:set name="confirmbutton"><xar:mlstring>Confirm deletion</xar:mlstring></xar:set>
+                <xar:set name="confirmtxt"><xar:mlstring>Please choose the cache files you wish to delete and check directory paths.</xar:mlstring></xar:set>
+
+                <form action="&xar-modurl-sitetools-admin-deletecache;" method="post" enctype="application/x-www-form-urlencoded">
+
+                    <fieldset>
+                        <legend><xar:mlstring>Available Caches</xar:mlstring></legend>
+                        <div class="xar-form-input-wrapper-after">
+                            #$confirmtxt#
+                        </div>
+                        <div class="xar-form-input-wrapper">
+                            <label for="delstyle" class="xar-form-label" title="#xarML('Check to delete your Styles cache files in path ')#">
+                                <xar:mlstring>Style Cache?</xar:mlstring>
+                            </label>
+                            <xar:data-input type="checkbox" name="delstyle" id="delstyle" checked="$delstyle" />
+                            <xar:ml>
+                                <xar:mlstring>All files and subdirs in #(1)</xar:mlstring>
+                                <xar:mlvar>#$stylepath#</xar:mlvar>
+                            </xar:ml>
+
+                        </div>
+
+                        <div class="xar-form-input-wrapper">
+                            <label for="delrss" class="xar-form-label" title="#xarML('Check to delete your RSS cache files in path ')# #$rsspath#">
+                                <xar:mlstring>RSS Cache?</xar:mlstring>
+                            </label>
+                            <xar:data-input type="checkbox" id="delrss" name="delrss" checked="$delrss" />
+                            <xar:ml>
+                                <xar:mlstring>All files and subdirs in #(1)</xar:mlstring>
+                                <xar:mlvar>#$rsspath#</xar:mlvar>
+                            </xar:ml>
+                        </div>
+
+                        <div class="xar-form-input-wrapper">
+                            <label for="deltempl" class="xar-form-label" title="#xarML('Check to delete your Template cache files in path ')# #$templpath#">
+                                <xar:mlstring>Template Cache?</xar:mlstring>
+                            </label>
+                            <xar:data-input type="checkbox" id="deltempl" name="deltempl" checked="$deltempl" />
+                            <xar:ml>
+                                <xar:mlstring>All files and subdirs in #(1)</xar:mlstring>
+                                <xar:mlvar>#$templpath#</xar:mlvar>
+                            </xar:ml>
+                        </div>
+                    </fieldset>
+                    <fieldset>
+                        <div class="xar-form-input-wrapper-after">
+                            <p><input type="submit" value="#$confirmbutton#"  /></p>
+                            <input type="hidden" name="authid" id="authid" value="#$authid#" />
+                            <input type="hidden" name="confirm" id="confirm" value="true" />
+                             <input type="hidden" name="returnurl" id="returnurl" value="#$returnurl#" />
+                            <p><xar:mlstring>Check your selection before continuing. </xar:mlstring></p>
+
+                        </div>
+                    </fieldset>
+                </form>
+            <xar:comment> Now redundent with status messages
+            <xar:elseif condition="$delfin eq true" />
+                <xar:set name="response"><xar:mlstring>Cache files successfully deleted!</xar:mlstring></xar:set>
+                <div class="xar-form-input-wrapper-after">
+                      #$response#
+                </div>
+            </xar:comment>
+            </xar:if>
+        </div>
+    </div>
+</div>

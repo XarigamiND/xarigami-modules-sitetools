@@ -1,0 +1,47 @@
+ChangeLog
+Version 1.0.2 2012-XX-XX
+- Remove some missed assign by reference calls
+
+Version 1.0.1 30-12-2010
+
+Version 1.0.0 26-07-2010
+- First cumulus version utilizing new exceptions and user errors
+- Compatible with xarigami only
+* xst-000630 Improve cacheview security
+
+Version 0.6.0 25-01-2010
+ * Fixed: xst-000496 replace any code marked for deprecation in php5.3 for php6
+ * Fixed: xst-000497 Not Null defaults not added to sql if empty or zero
+ * Fixed: xst-000498 Scheduled FTP of backup not working
+ * template clean up with addition of standard xar classes
+ * add xarpages to Link Checks
+ * redesign the Link check page
+
+Version 0.5.0 28-06-2009
+ * Major reworking of backup to cater for mysql verions> 4
+ * Add bzip2 as well as gzip for backup
+ * Rewrite the dbsitetools_mysql class and update others
+ * Fix numerous issues with the prior backup file content mainly in upstream project code
+ * Major template cleanup and
+ * Menu links updated to current standards
+ * Add sorting to cacheview
+ * Remove setting of cache file directories - set to default (with consideration for relocatable var)
+ * Better recognition of var directory and expansion
+ * More options for backup
+
+Version 0.2.1
+ *  FTP backup file added (michelv)
+Version 0.2
+ * 2003-10-18 jojodee: added scheduling for backup tool, enhanced backup, bug fixes
+ * 2004-04-13 jojodee: minor bug fixes, moved sql functions to classes for easy addition
+                       of alternative database classes and transparent user interface
+ * 2004-11-07 jojodee: add Mrb's simple MySQL Terminal.
+                       Tidy up the templates, and add in security check.
+Version 0.1
+ * 2003-09-08 jojodee: Initial version - optimize and cache deletion routines.
+ * 2003-10-05 jojodee: added a simple template cache file viewer.
+ * 2003-10-13 jojodee: initial backup tool added
+ * 2003-10-14 mikespub: link checking utility added
+ * 2003-10-15 jojodee: add optimize function to work with scheduler
+
+

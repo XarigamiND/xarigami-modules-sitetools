@@ -1,0 +1,106 @@
+<xar:comment> License: GPL http://www.gnu.org/copyleft/gpl.html </xar:comment>
+<xar:set name="modInfo">xarModGetInfo(xarModGetIDFromName('sitetools'))</xar:set>
+<div class="xar-mod-page">
+    <div class="xar-mod-head">
+        <xar:if condition="!xarRequestIsAJAX()">
+            <xar:template type="module" module="base" file="admin-menu" />
+        </xar:if>
+    </div>
+    <div class="xar-mod-body">
+        <h1><xar:mlstring>Overview</xar:mlstring></h1>
+        <div class="xar-mod-content">
+            <img src="#xarTplGetImage('admin.png','sitetools')#" class="xar-module-icon" alt="official icon"/>
+            <h2>
+                <xar:mlstring>What is it?</xar:mlstring>
+            </h2>
+            <p>
+                <em><xar:mlstring>SiteTools is a utility module that provides a number of related database and site 'housekeeping' utilities</xar:mlstring></em><xar:mlstring>:</xar:mlstring>
+            </p>
+            <p>By choosing an option from the SiteTools menu. At the present time you can:</p>
+                <ul>
+                    <li><xar:mlstring>Optimize your MySQL database tables</xar:mlstring></li>
+                    <li><xar:mlstring>Backup your MySQL database tables (MySQL 4 or higher required) and optional FTP of backup</xar:mlstring></li>
+                    <li><xar:mlstring>Simple SQL Terminal - to issue SQL commands</xar:mlstring></li>
+                    <li><xar:mlstring>Browse template cache files</xar:mlstring></li>
+                    <li><xar:mlstring>Delete Template, RSS or ADOdb cache files</xar:mlstring></li>
+                    <li><xar:mlstring>Web Link Checker - check web links, image links and so on.</xar:mlstring></li>
+                    <li><xar:mlstring>Scheduling of optimize and backup with Scheduler module installed.</xar:mlstring></li>
+                </ul>
+
+            <h3>
+                <xar:mlstring>How to use it?</xar:mlstring>
+            </h3>
+                <ol>
+                    <li><xar:mlstring>SiteTools optimize and backup functions currently only work with MySQL. Further classes are in the making for Postgres, and SQLite.</xar:mlstring></li>
+                    <li><xar:mlstring>SiteTools provides Administration options and thus requires administration priviledges.</xar:mlstring></li>
+                    <li><xar:mlstring>Start by checking settings in the SiteTools configuration options.</xar:mlstring></li>
+                    <li><xar:mlstring>Warning: Default cache and backup directory paths  should only be changed if alternative cache or backup paths have already been created
+                        and are writeable - chmod 777. Backup paths are configurable</xar:mlstring>
+                    </li>
+                </ol>
+
+            <h4>
+                <xar:mlstring>Using Scheduler with Sitetools</xar:mlstring>
+            </h4>
+            <p><xar:mlstring>A number of SiteTool functions also work in conjunction with the Scheduler module to schedule
+             regular maintenance activies. At the present time the following functions are supported with Scheduler:</xar:mlstring></p>
+            <ol>
+                <li><xar:mlstring>Backup Database</xar:mlstring></li>
+                <li><xar:mlstring>Optimize Database</xar:mlstring></li>
+
+            </ol>
+            <p>
+                 <xar:mlstring>You must have the Scheduler module installed and active to see further scheduler options
+                  in your Sitetools Module. Once Scheduler is installed, you can choose to set the interval for these
+                  functions. See the Scheduler Module for more details.</xar:mlstring>
+            </p>
+
+            <h3>
+                <xar:mlstring>Included Blocks</xar:mlstring>
+            </h3>
+            <p>
+                <xar:mlstring>There are no included blocks at this time.</xar:mlstring>
+            </p>
+            <h3>
+                <xar:mlstring>Included Hooks</xar:mlstring>
+            </h3>
+            <p>
+                <xar:mlstring>There are no included hooks at this time.</xar:mlstring>
+            </p>
+            <h3>
+                <xar:mlstring>Further Information</xar:mlstring>
+            </h3>
+            <p>
+                <xar:mlstring>Further information on the Sitetools module can be found at</xar:mlstring>
+            </p>
+            <xar:set name="projecturl">'http://xarigami.com/project/sitetools'</xar:set>
+            <xar:set name="projectlink">'<a title="'.xarML('Sitetools Module - Extension 887').'" href="'.$projecturl.'">'.xarML('Xarigami Sitetools Project Page').'</a>'</xar:set>
+            <ul>
+                <li>
+                    <xar:ml>
+                        <xar:mlstring>Sitetools Extension page at #(1).</xar:mlstring>
+                        <xar:mlvar>#$projectlink#</xar:mlvar>
+                    </xar:ml>
+                </li>
+                <li>
+                    <xar:set name="docurl">'http://xarigami.com/project/sitetools?page=resources'</xar:set>
+                    <xar:set name="doclink">'<a title="'.xarML('Sitetools Module Resources').'" href="'.$docurl.'">'.xarML('Xarigami Sitetools Resource Page').'</a>'</xar:set>
+                    <xar:ml>
+                        <xar:mlstring>Related tutorials and documentation on the Sitetools found at #(1)</xar:mlstring>
+                        <xar:mlvar>#$doclink#</xar:mlvar>
+                    </xar:ml>
+                </li>
+            </ul>
+            <p class="xar-sub">
+                <xar:ml>
+                    <xar:mlstring>
+                        Xarigami Sitetools Module Overview Rev 1.0.1 2010-107-24 for Xarigami Sitetools V1.0.0
+                    </xar:mlstring>
+                    <xar:mlvar>#$modInfo.version#</xar:mlvar>
+                </xar:ml>
+            </p>
+        </div>
+    </div>
+</div>
+
+

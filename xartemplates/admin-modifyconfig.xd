@@ -1,0 +1,260 @@
+<xar:set name="updatebutton"><xar:mlstring>Update configuration</xar:mlstring></xar:set>
+<xar:set name="updatenote"><xar:mlstring>The default cache paths are entered below.
+                Change them only if you have changed default cache directory paths.
+                Note these should be full paths and there is no trailing slash in the path names.</xar:mlstring></xar:set>
+<xar:set name="defstyle"><xar:mlstring>Default Styles Cache path is </xar:mlstring></xar:set>
+<xar:set name="defrss"><xar:mlstring>Default RSS Cache path is </xar:mlstring></xar:set>
+<xar:set name="deftem"><xar:mlstring>Default Template Cache path is </xar:mlstring></xar:set>
+<xar:set name="bkup"><xar:mlstring>Relative path from your root document directory to the backup directory on your server, where backup files will be created. It must be writeable chmod 777. No trailing slash.</xar:mlstring></xar:set>
+
+<xar:set name="schedulingoff"><xar:mlstring>not scheduled</xar:mlstring></xar:set>
+<xar:set name="schedulinghelp"><xar:mlstring>Specify how often this job should be executed</xar:mlstring></xar:set>
+<xar:comment>FTP strings</xar:comment>
+<xar:set name="ftpservertitle"><xar:mlstring>Enter the full name of the server.</xar:mlstring></xar:set>
+<xar:set name="ftpusertitle"><xar:mlstring>The unique user name for the FTP server.</xar:mlstring></xar:set>
+<xar:set name="ftpdirtitle"><xar:mlstring>File path from FTP base directory. Defaults to current dir (.)</xar:mlstring></xar:set>
+
+<div class="xar-mod-page">
+    <div class="xar-mod-head">
+        <xar:if condition="!xarRequestIsAJAX()">
+            <xar:template type="module" module="base" file="admin-menu" />
+        </xar:if>
+    </div>
+    <div class="xar-mod-body">
+        <h1><xar:mlstring>Modify configuration</xar:mlstring></h1>
+        <div class="xar-mod-content">
+            <form action="&xar-modurl-sitetools-admin-updateconfig;" method="post" enctype="application/x-www-form-urlencoded">
+
+                <xar:comment>jojo - we do not need these - assume they are in the default place in the relocatable var dir (this was not availablewhen the module was written)
+
+                <fieldset>
+                    <legend><xar:mlstring>Cache Options</xar:mlstring></legend>
+                    <div class="xar-form-input-wrapper-after">
+                        <xar:mlstring>Update configuration</xar:mlstring>
+                    </div>
+
+                    <div class="xar-form-input-wrapper">
+                        <label for="stylepath" class="xar-form-label" title="#$defstyle# #$defstylepath#">
+                             <xar:mlstring>Styles Cache Path:</xar:mlstring>
+                        </label>
+                        <input type="text" name="stylepath" id="stylepath" size="40" maxlength="128" value="#$stylepath#" />
+                    </div>
+
+                    <div class="xar-form-input-wrapper">
+                        <label for="rsspath" class="xar-form-label" title="#$defrss# #$defrsspath#">
+                            <xar:mlstring>RSS Cache Path:</xar:mlstring>
+                        </label>
+                        <input type="text" name="rsspath" id="rsspath" size="40" maxlength="128" value="#$rsspath#" />
+                    </div>
+
+                    <div class="xar-form-input-wrapper">
+                        <label for="templpath" class="xar-form-label" title="#$deftem# #$deftemplpath#">
+                                <xar:mlstring>Template Cache Path:</xar:mlstring>
+                        </label>
+                        <input type="text" name="templpath" id="templpath" size="40" maxlength="128" value="#$templpath#" />
+                    </div>
+               </fieldset>
+                </xar:comment>
+               <fieldset>
+
+                   <legend><xar:mlstring>Backup File Location and Type </xar:mlstring></legend>
+                       <div class="xar-form-input-wrapper">
+                           <label for="backuppath" class="xar-form-label" title="#$bkup#">
+                                <xar:mlstring>Backup Path:</xar:mlstring>
+                           </label>
+                           <input type="text" name="backuppath" id="backuppath" size="60" maxlength="128" value="#$backuppath#" />
+                           <div class="xar-form-input-wrapper-after">
+                                <xar:mlstring>NO ending slash. The directory must be writeable by the server</xar:mlstring>
+                           </div>
+                       </div>
+
+                       <div class="xar-form-input-wrapper">
+                            <label for="timestamp" class="xar-form-label">
+                                <xar:mlstring>Use timestamp?</xar:mlstring>
+                            </label>
+                            <xar:data-input type="checkbox" name="timestamp" id="timestamp" checked="$timestamp" />
+                            <xar:mlstring>A time stamp will be added to the backup file name.</xar:mlstring>
+                        </div>
+                        <div class="xar-form-input-wrapper">
+                            <label for="dbcompresstype" class="xar-form-label" >
+                                <xar:mlstring>Compress database?</xar:mlstring>
+                            </label>
+                            <xar:data-input type="dropdown" name="dbcompresstype" id="dbcompresstype" validation="$compressoptions" value="$dbcompresstype" />
+                            <xar:mlstring>Compression method if chosen, for the backup file.</xar:mlstring>
+                        </div>
+                        <div class="xar-form-input-wrapper">
+                            <label for="colnumber" class="xar-form-label" >
+                               <xar:mlstring>No. of columns in table display:</xar:mlstring>
+                            </label>
+                            <input type="text" name="colnumber" id="colnumber" size="2" maxlength="3" value="#$colnumber#" />
+                            <xar:mlstring>Number of columns used to list database tables with in the partial backup option</xar:mlstring>
+                        </div>
+                        <div class="xar-form-input-wrapper">
+                            <label for="disablemysqldump" class="xar-form-label" >
+                                <xar:mlstring>Disable MySQLDump?</xar:mlstring>
+                            </label>
+
+                            <xar:data-input type="checkbox" name="disablemysqldump" id="disablemysqldump" value="1" checked="$disablemysqldump" disabled="disabled"/>
+                            <span style="font-style:italic;font-weight:222">
+                                <xar:ml>
+                                   <xar:mlstring>[MySQLDump #(1) available]</xar:mlstring>
+                                    <xar:mlvar>#$hasmysqldump#</xar:mlvar>
+                                </xar:ml>
+                            </span>
+                            <p class="xar-form-input-wrapper-after">
+                                <xar:mlstring>Using mysqldump is faster than using php but it may not be supported by your server and by default is disabled.
+                                Leave unchecked for fastest results.</xar:mlstring>
+                            </p>
+
+                        </div>
+                </fieldset>
+                <fieldset>
+                   <legend><xar:mlstring>Backup File Content Options</xar:mlstring></legend>
+                        <p><xar:mlstring>Use the default values unless you need to change them. The defaults should work for most systems.</xar:mlstring></p>
+                        <div class="xar-form-input-wrapper">
+                            <label for="dbnameincreate" class="xar-form-label" >
+                                <xar:mlstring>Use database prefix?</xar:mlstring>
+                            </label>
+                            <xar:data-input type="checkbox" name="dbnameincreate" id="dbnameincreate" checked="$dbnameincreate" />
+                            <xar:mlstring>Prefix all table names in the backup file sql table create statements with database name.</xar:mlstring>
+                        </div>
+                        <div class="xar-form-input-wrapper">
+                            <label for="createifnotexists" class="xar-form-label" >
+                                <xar:mlstring>Use 'IF NOT EXISTS'?</xar:mlstring>
+                            </label>
+                            <xar:data-input type="checkbox" name="createifnotexists" id="createifnotexists" checked="$createifnotexists" />
+                            <xar:mlstring>'CREATE TABLE IF NOT EXISTS' is used otherwise 'CREATE TABLE'</xar:mlstring>
+                        </div>
+                        <div class="xar-form-input-wrapper">
+                            <label for="hexblobs" class="xar-form-label" >
+                                <xar:mlstring>Use HEX blobs?</xar:mlstring>
+                            </label>
+                            <xar:data-input type="checkbox" name="hexblobs" id="hexblobs" checked="$hexblobs" />
+                            <xar:mlstring>Blobs are dumped as hex string otherwise escaped binary strings</xar:mlstring>
+                        </div>
+
+                        <div class="xar-form-input-wrapper">
+                            <label for="backtickchar" class="xar-form-label" >
+                                <xar:mlstring>Back tick character:</xar:mlstring>
+                            </label>
+                            <xar:data-input type="textbox" name="backtickchar" id="backtickchar" value="$backtickchar" size="1" maxlength="1" />
+                            <xar:mlstring>Used to signify table column names</xar:mlstring>
+                        </div>
+                        <div class="xar-form-input-wrapper">
+                            <label for="quotechar" class="xar-form-label" >
+                                <xar:mlstring>Quote character:</xar:mlstring>
+                            </label>
+                            <xar:data-input type="textbox" name="quotechar" id="quotechar" value="$quotechar" size="1" maxlength="2" />
+                            <xar:mlstring>Used to quote values</xar:mlstring>
+                        </div>
+                </fieldset>
+                <fieldset>
+                <legend><xar:mlstring>Restore Installation Defaults</xar:mlstring></legend>
+                        <div class="xar-form-input-wrapper">
+                            <label for="restoredefault" class="xar-form-label" >
+                                  <xar:mlstring>Restore Default values? </xar:mlstring>
+                            </label>
+                            <xar:if condition="$restoredefault">
+                                <input type="checkbox" name="restoredefault" id="restoredefault" checked="$restoredefault" onclick="this.form.submit();"/>
+                            <xar:else />
+                                <input type="checkbox" name="restoredefault" id="restoredefault"  onclick="this.form.submit();"/>
+                            </xar:if>
+                             <xar:mlstring>Checking this box will immediately restore all File Location, Type and Content variables to install DEFAULTS</xar:mlstring>
+                        </div>
+                </fieldset>
+                <fieldset>
+                    <legend><xar:mlstring>Scheduling Options</xar:mlstring></legend>
+                    <xar:if condition="xarModIsAvailable('scheduler')">
+                        <div class="xar-form-input-wrapper">
+                            <label for="defaultbktype" class="xar-form-label" title="#xarML('This is the default backup type, used by default with the Scheduler module.')#">
+                                 <xar:mlstring>Default Backup Type used with Scheduler:</xar:mlstring>
+                            </label>
+                            <xar:data-input type="dropdown" name="defaultbktype" id="defaultbktype" validation="$bkoptions" value="$defaultbktype" />
+                        </div>
+                        <xar:foreach in="$schedule" key="$what" value="$descr">
+                            <div class="xar-form-input-wrapper">
+                                <label for="interval_#$what#" class="xar-form-label" title="#$schedulinghelp#">
+                                    #$descr#
+                                </label>
+                                <select name="interval[#$what#]" id="interval_#$what#">
+                                    <option value="">#$schedulingoff#</option>
+                                    <xar:foreach in="$intervals" key="$name" value="$display">
+                                        <xar:if condition="!empty($interval[$what]) and $interval[$what] eq $name">
+                                            <option value="#$name#" selected="selected">#$display#</option>
+                                        <xar:else/>
+                                            <option value="#$name#">#$display#</option>
+                                        </xar:if>
+                                    </xar:foreach>
+                                </select>
+                            </div>
+                        </xar:foreach>
+                        <div class="xar-form-input-wrapper-after">
+                            <xar:mlstring>Please note that if you stop the scheduler or if it is not triggered, these jobs will not be executed.</xar:mlstring>
+                        </div>
+                        <xar:if condition="$ftpextension">
+                            <div class="xar-form-input-wrapper">
+                                <label for="useftpbackup" class="xar-form-label">
+                                    <xar:mlstring>FTP back-up to another server?</xar:mlstring>
+                                </label>
+                               <xar:data-input type="checkbox" name="useftpbackup" id="useftpbackup" checked="$useftpbackup"/>
+                               <xar:mlstring>If checked, Scheduler will need an FTP server to copy the file to.</xar:mlstring>
+                            </div>
+                            <xar:if condition="$sslextension">
+                                <div class="xar-form-input-wrapper">
+                                    <label for="usesftpbackup" class="xar-form-label" >
+                                       <xar:mlstring>Use Secure FTP?</xar:mlstring>
+                                    </label>
+                                    <xar:data-input type="checkbox" name="usesftpbackup" id="usesftpbackup" checked="$usesftpbackup" />
+                                    <xar:mlstring>You will need to have both the FTP and OpenSSL extension installed.</xar:mlstring>
+                                 </div>
+                            </xar:if>
+                            <div class="xar-form-input-wrapper">
+                                <label for="ftpserver" class="xar-form-label" title="#$ftpservertitle#">
+                                     <xar:mlstring>The FTP server</xar:mlstring>
+                                </label>
+                                <input type="text" name="ftpserver" id="ftpserver" size="40" maxlength="128" value="#$ftpserver#" />
+                            </div>
+                            <div class="xar-form-input-wrapper">
+                                <label for="ftpuser" class="xar-form-label" title="#$ftpusertitle#">
+                                    <xar:mlstring>The username</xar:mlstring>
+                                </label>
+                                <input type="text" name="ftpuser" id="ftpuser" size="40" maxlength="128" value="#$ftpuser#" />
+                            </div>
+                            <div class="xar-form-input-wrapper">
+                                <label for="ftppw" class="xar-form-label" >
+                                    <xar:mlstring>Password</xar:mlstring>
+                                </label>
+                                <input type="password" name="ftppw" id="ftppw" size="40" maxlength="128" value="#$ftppw#" />
+                            </div>
+                            <div class="xar-form-input-wrapper">
+                                <label for="ftpdir" class="xar-form-label" title="#$ftpdirtitle#">
+                                    <xar:mlstring>Path from FTP base directory</xar:mlstring>
+                                </label>
+                                <input type="text" name="ftpdir" id="ftpdir" size="40" maxlength="128" value="#$ftpdir#" />
+                                <xar:mlstring>(no ending slash)</xar:mlstring>
+                                <p class="xar-form-input-wrapper-after"><xar:mlstring>Please use current directory (.) for the FTP base directory.</xar:mlstring></p>
+                            </div>
+                        </xar:if>
+                    <xar:else />
+                        <div class="xar-form-input-wrapper-after">
+                            <p><xar:mlstring>Please install and activate the Scheduler module to enable scheduling.</xar:mlstring></p>
+                             <p><xar:mlstring>Scheduling supports unattended:</xar:mlstring></p>
+                                <ul>
+                                    <li><xar:mlstring>database table optimization </xar:mlstring></li>
+                                    <li><xar:mlstring>database backup</xar:mlstring> </li>
+                                    <li><xar:mlstring>FTP of backup files to remote server</xar:mlstring> </li>
+                                </ul>
+                        </div>
+                    </xar:if>
+                </fieldset>
+                <fieldset>
+                    <div class="xar-form-input-wrapper-after">
+                        <input type="hidden" name="authid" id="authid" value="#$authid#" />
+                        <input type="submit" value="#$updatebutton#" />
+
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</div>

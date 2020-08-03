@@ -1,0 +1,27 @@
+<xar:comment> License: GPL http://www.gnu.org/copyleft/gpl.html </xar:comment>
+<div class="xar-mod-page">
+    <div class="xar-mod-head">
+        <xar:if condition="!xarRequestIsAJAX()">
+            <xar:template type="module" module="base" file="admin-menu" />
+        </xar:if>
+    </div>
+    <div class="xar-mod-body">
+        <h1><xar:mlstring>Delete database backup</xar:mlstring></h1>
+        <div class="xar-mod-content">
+            <xar:set name="resultstring"><xar:mlstring>Your backup file:</xar:mlstring></xar:set>
+            <xar:set name="success"><xar:mlstring>has been successfully deleted.</xar:mlstring></xar:set>
+            <xar:set name="failure"><xar:mlstring>still exists as there was a problem deleting it.</xar:mlstring></xar:set>
+            <!-- First get choice of backup type -->
+                <div class="xar-form-footer">
+                #$resultstring# <br /><span style="font-weight:bold;">#$filedeleted#</span><br />
+                <xar:if condition="$outcome eq 1">
+                   #$success#
+                <xar:elseif condition="$outcome eq 0"/>
+                   #$failure#
+                <xar:else />
+                   <xar:mlstring>has already been deleted or no longer exists in that location.</xar:mlstring>
+                </xar:if>
+                </div>
+        </div>
+    </div>
+</div>

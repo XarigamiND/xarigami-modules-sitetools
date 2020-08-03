@@ -1,0 +1,184 @@
+<div class="xar-mod-page">
+    <div class="xar-mod-head">
+        <xar:if condition="!xarRequestIsAJAX()">
+            <xar:template type="module" module="base" file="admin-menu" />
+        </xar:if>
+    </div>
+    <div class="xar-mod-body">
+        <h1><xar:mlstring>Backup database tables</xar:mlstring></h1>
+        <div class="xar-mod-content">
+            <xar:comment>Repeated mls strings</xar:comment>
+            <xar:set name="confirmbutton"><xar:mlstring>Start Backup</xar:mlstring></xar:set>
+            <xar:set name="goback"><xar:mlstring>Go Back</xar:mlstring></xar:set>
+            <xar:set name="checktrue"><xar:mlstring>Select All</xar:mlstring></xar:set>
+            <xar:set name="checkfalse"><xar:mlstring>Deselect All</xar:mlstring></xar:set>
+
+            <!-- First get choice of backup type -->
+            <xar:if condition="$warning eq 1">
+                <div>
+                    #$warningmessage#
+                </div>
+            <xar:elseif condition="$startbackup eq ''" />
+                <form method="post" id="backupform" action="&xar-modurl-sitetools-admin-backup;" enctype="application/x-www-form-urlencoded">
+
+                    <fieldset>
+                        <legend><xar:mlstring>Backup Options</xar:mlstring></legend>
+                        <div class="xar-form-input-wrapper">
+                            <label for="startbackup" class="xar-form-label" title="#xarML('Select the type of backup you require.')#">
+                                    <xar:mlstring>Backup Type:</xar:mlstring>
+                            </label>
+                            <xar:data-input type="dropdown" id="startbackup" name="startbackup" validation="$backupops" value="$startbackup" />
+                        </div>
+                       <div class="xar-form-input-wrapper">
+                            <label for="dbcompresstype" class="xar-form-label">
+                                   <xar:mlstring>Compress backup file?</xar:mlstring>
+                            </label>
+                            <xar:data-input type="dropdown" name="dbcompresstype" id="dbcompresstype" value="$dbcompresstype" validation="$compressoptions" />
+                            <p class="xar-form-input-wrapper-after">
+                                <xar:mlstring>Select compression type for your backup. If your selected format is not available a text sql file will be created.</xar:mlstring>
+                            </p>
+                        </div>
+                        <div class="xar-form-input-wrapper">
+                            <label for="screenlabel" class="xar-form-label" >
+                                <xar:mlstring>SUPPRESS running status display:</xar:mlstring>
+                            </label>
+                            <xar:data-input type="checkbox" name="nohtml" id="nohtml" checked="$nohtml" />
+                            <xar:mlstring>By default, a running status of backup progress is displayed. Checking this box suppresses this output.</xar:mlstring>
+                        </div>
+                    </fieldset>
+                    <fieldset>
+                        <div class="xar-form-input-wrapper-after">
+                            <input type="submit" name="confirm" value="#$confirmbutton#" />
+                            <input type="hidden" name="authid" id="authid" value="#$authid#" />
+                            <p><xar:mlstring>BACKUP will start immediately on form submission unless you select 'Partial' backup type,
+                                and list of tables will be displayed for you to choose from.
+                                </xar:mlstring>
+                            </p>
+                        </div>
+                    </fieldset>
+
+                </form>
+            <!-- Start partial database table selection display -->
+            <xar:elseif condition="$startbackup eq 'partial'" />
+                <form action="&xar-modurl-sitetools-admin-backup;" method="post" name="SelectedTablesForm" id="SelectedTablesForm" enctype="application/x-www-form-urlencoded">
+
+                    <table class="xar-items">
+                        <tr>
+                            <th nowrap="nowrap" colspan="#$colnumber#">
+                                    <xar:ml>
+                                        <xar:mlstring>Tables for: #(1) (records)</xar:mlstring>
+                                        <xar:mlvar>#$dbname#</xar:mlvar>
+                                    </xar:ml>
+                            </th>
+                        </tr>
+                        <xar:set name="rowclass">'xar-norm'</xar:set>
+                        <tr class="#$rowclass#">
+                            <xar:set name="i">1</xar:set>
+                            <xar:foreach in="$dbtables" value="$dbtable">
+                                <xar:if condition="$i++ lt $colnumber">
+                                  <td class="xar-norm-outline xar-align-left xar-margin-thick" style="width:4%;border-style: dotted;">
+                                    <input type="checkbox" name="#$checkboxname#" value="#$dbtable['tablename']#" checked="checked" />
+                                    #$dbtable['tablename']# (#$dbtable['tablerecs']#)
+                                  </td>
+                                <xar:else />
+                                  <td class="xar-norm-outline xar-align-left xar-margin-thick" style="width:4%;border-style: dotted;">
+                                    <input type="checkbox" name="#$checkboxname#" value="#$dbtable['tablename']#" checked="checked" />
+                                    #$dbtable['tablename']# (#$dbtable['tablerecs']#)
+                                    <xar:set name="i">
+                                            1
+                                    </xar:set>
+                                   </td>
+                           <xar:set name="rowclass">$rowclass == 'xar-norm' ? 'xar-alt' : 'xar-norm'</xar:set>
+                        </tr>
+                        <tr class="#$rowclass#">
+                                </xar:if>
+                            </xar:foreach>
+                            <xar:set name="rowclass">$rowclass == 'xar-norm' ? 'xar-alt' : 'xar-norm'</xar:set>
+                        </tr>
+                    </table>
+                    <p class="xar-form-input-wrapper xar-align-center">
+                        <input type="button" OnClick="CheckAll(true)" value="#$checktrue#" />
+                        <input type="button" OnClick="CheckAll(false)" value="#$checkfalse#" />
+                        <input type="submit" name="SelectedTablesOnly" value="#$confirmbutton#" />
+
+                        <input type="hidden" name="authid" id="authid" value="#$authid#" />
+                        <input type="hidden" name="startbackup" id="startbackup" value="complete" />
+                        <input type="hidden" name="dbcompresstype" id="dbcompresstype" value="#$dbcompresstype#" />
+                        <input type="hidden" name="nohtml" id="nohtml" value="#$nohtml#" />
+
+                    </p>
+                    <p class="xar-clear-left xar-align-left"><a href="#$returnurl#">#$goback#</a>
+                    </p>
+                </form>
+            <xar:elseif condition="$startbackup" />
+                <xar:if condition="!empty($runningstatus)">
+                    <xar:loop name="$runningstatus">
+                        #$loop:item['message']#
+                         <br />
+                    </xar:loop>
+                </xar:if>
+                <div style="margin-top:20px;">
+                    <table width='90%' align='center' border='1'>
+                        <tr>
+                            <th valign='middle' colspan='2'>
+                                <xar:mlstring>
+                                    Backup Summary
+                                </xar:mlstring>
+                            </th>
+                        </tr>
+                        <tr>
+                            <td valign='middle' align='left'>
+                                <xar:mlstring>
+                                    Completed in:
+                                </xar:mlstring>
+                            </td>
+                            <td valign='middle' align='left'>
+                                #$completetime#
+                            </td>
+                        </tr>
+                        <tr>
+                            <td valign='middle' align='left'>
+                                <xar:mlstring>
+                                    Backup type:
+                                </xar:mlstring>
+                            </td>
+                            <td valign='middle' align='left'>
+                                #$btype#
+                            </td>
+                        </tr>
+                        <tr>
+                            <td valign='middle' align='left'>
+                                <xar:mlstring>
+                                    Click to download:
+                                </xar:mlstring>
+                            </td>
+                            <td valign='middle' align='left'>
+                                <a href="#$downloadurl#">
+                                    #$bkname#
+                                </a>
+                                    (#$bkfilesize#)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td valign='middle' colspan='2' align='center'>
+                                <xar:mlstring><strong>SECURITY WARNING:</strong><br />
+                                    Do not leave your backup file in a web browsable directory.<br />
+                                    Remember to delete it, or move it to a secure directory.
+                                </xar:mlstring>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td valign='middle' colspan="2" align='center'>
+                                <a href="#$deleteurl#">
+                                    <xar:mlstring>
+                                        DELETE backup
+                                    </xar:mlstring>
+                                </a>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </xar:if>
+        </div>
+    </div>
+</div>
