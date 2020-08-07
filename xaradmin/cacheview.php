@@ -75,7 +75,7 @@ function sitetools_admin_cacheview($args)
         $count=0;
         $cachekeyfile=@file($cachefile);
         $fd = @fopen($cachefile,'r');
-        while (list ($line_num, $line) = each ($cachekeyfile)) {
+        foreach($cachekeyfile as $line_num => $line) {
               $cachelist[]=array(explode(": ", $line));
             ++$count;
         }
