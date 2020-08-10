@@ -70,26 +70,9 @@
             <h3>
                 <xar:mlstring>Further Information</xar:mlstring>
             </h3>
-            <p>
-                <xar:mlstring>Further information on the Sitetools module can be found at</xar:mlstring>
-            </p>
-            <xar:set name="projecturl">'http://xarigami.com/project/sitetools'</xar:set>
-            <xar:set name="projectlink">'<a title="'.xarML('Sitetools Module - Extension 887').'" href="'.$projecturl.'">'.xarML('Xarigami Sitetools Project Page').'</a>'</xar:set>
             <ul>
-                <li>
-                    <xar:ml>
-                        <xar:mlstring>Sitetools Extension page at #(1).</xar:mlstring>
-                        <xar:mlvar>#$projectlink#</xar:mlvar>
-                    </xar:ml>
-                </li>
-                <li>
-                    <xar:set name="docurl">'http://xarigami.com/project/sitetools?page=resources'</xar:set>
-                    <xar:set name="doclink">'<a title="'.xarML('Sitetools Module Resources').'" href="'.$docurl.'">'.xarML('Xarigami Sitetools Resource Page').'</a>'</xar:set>
-                    <xar:ml>
-                        <xar:mlstring>Related tutorials and documentation on the Sitetools found at #(1)</xar:mlstring>
-                        <xar:mlvar>#$doclink#</xar:mlvar>
-                    </xar:ml>
-                </li>
+                <li><a href="http://xarigami.org/project/sitetools"><xar:mlstring>Xarigami Sitetools project page</xar:mlstring></a></li>
+                <li><a href="http://xarigami.org/contrails/displayproject/xst"><xar:mlstring>Xarigami Sitetools issue tracker</xar:mlstring></a></li>
             </ul>
             <p class="xar-sub">
                 <xar:ml>
