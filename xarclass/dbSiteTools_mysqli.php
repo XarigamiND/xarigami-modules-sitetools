@@ -14,7 +14,7 @@
  */
 sys::import('modules.sitetools.xarclass.dbSiteTools');
 include_once('modules/sitetools/xarclass/backupDB.common.php');
-class dbSiteTools_mysql extends dbSiteTools
+class dbSiteTools_mysqli extends dbSiteTools
 {
     function _optimize()
     {
@@ -26,11 +26,12 @@ class dbSiteTools_mysql extends dbSiteTools
         $gain=0;
         $rowinfo['total_gain']=0;
         $rowinfo['total_kbs']=0;
-        $version=substr(mysql_get_server_info(),0,3);
+        $version=substr(mysqli_get_server_info(),0,3);
         $local_query = 'SHOW TABLE STATUS FROM '.$this->dbname;
-        $result      = @mysql_query($local_query);
-        if (@mysql_num_rows($result)) {
-            while ($row = mysql_fetch_array($result)) {
+        $conn = $this->dbconn->_connectionID;
+        $result = @mysqli_query($conn, $local_query);
+        if (@mysqli_num_rows($result)) {
+            while ($row = mysqli_fetch_array($result)) {
                 if ($version>='4.1') {
                   $rowdata[]=array('rowname' => $row[0],
                                     'totaldata'  => $row[6],
@@ -43,7 +44,7 @@ class dbSiteTools_mysql extends dbSiteTools
                                     'gain'       => $row[8]);
                 }
                 $local_query = 'OPTIMIZE TABLE '.$row[0];
-                $resultat  = mysql_query($local_query);
+                $resultat  = mysqli_query($conn, $local_query);
            }
         }
 
@@ -80,20 +81,21 @@ class dbSiteTools_mysql extends dbSiteTools
             $$varname = $value;
         }
         $query = 'SHOW TABLES FROM '.$this->dbname;
-        $tables = mysql_query($query);//mysql_list_tables($this->dbname);
-            if (is_resource($tables)) {
+        $conn = $this->dbconn->_connectionID;
+        $tables = mysqli_query($conn, $query);//mysql_list_tables($this->dbname);
+            if ($tables) {
                 $tablecounter = 0;
-                    while (list($tablename) = mysql_fetch_array($tables)) {
-                        $TableStatusResult = mysql_query('SHOW TABLE STATUS LIKE "'.mysql_escape_string($tablename).'"');
-                        if ( $TableStatusRow = mysql_fetch_assoc($TableStatusResult)) {
+                    while (list($tablename) = mysqli_fetch_array($tables)) {
+                        $TableStatusResult = mysqli_query($conn, 'SHOW TABLE STATUS LIKE "'.mysqli_escape_string($conn, $tablename).'"');
+                        if ( $TableStatusRow = mysqli_fetch_assoc($TableStatusResult)) {
                             if (isset($TypeEngineKey) && in_array(@$TableStatusRow[$TypeEngineKey], $neverbackupdbtypes)) {
                                 //don't back up HEAP tables
                             } else {
                                 $tablecounter++;
-                                $SQLquery = 'SELECT COUNT(*) AS '.$backtickchar.'num'.$backtickchar.' FROM '.$backtickchar.mysql_escape_string($tablename).$backtickchar;
+                                $SQLquery = 'SELECT COUNT(*) AS '.$backtickchar.'num'.$backtickchar.' FROM '.$backtickchar.mysqli_escape_string($conn, $tablename).$backtickchar;
                                // $SelectedTables["$this->dbname"][] = $tablename;
-                                $result = mysql_query($SQLquery);
-                                $row = mysql_fetch_array($result);
+                                $result = mysqli_query($conn, $SQLquery);
+                                $row = mysqli_fetch_array($result);
                                 if ($fulldata) {
                                     $SelectedTables["$this->dbname"][] = array('tablenum'=>$tablecounter, 'tablename'=>$tablename, 'tablerecs'=>$row['num']);
                                 } else {
@@ -109,13 +111,14 @@ class dbSiteTools_mysql extends dbSiteTools
 
     function _checktables($SelectedTables)
     {
+        $conn = $this->dbconn->_connectionID;
         foreach ($SelectedTables as $this->dbname => $selectedtablesarray) {
-               mysql_select_db($this->dbname);
+               mysqli_select_db($conn, $this->dbname);
             foreach ($selectedtablesarray as $selectedtablename) {
-                $result = mysql_query('CHECK TABLE '.$selectedtablename);
-                while ($row = mysql_fetch_array($result)) {
+                $result = mysqli_query($conn, 'CHECK TABLE '.$selectedtablename);
+                while ($row = mysqli_fetch_array($result)) {
                     if ($row['Msg_text'] == 'OK') {
-                        mysql_query('OPTIMIZE TABLE '.$selectedtablename);
+                        mysqli_query($conn, 'OPTIMIZE TABLE '.$selectedtablename);
                     } else {
                          $TableErrors[] = $row['Table'].' ['.$row['Msg_type'].'] '.$row['Msg_text'];
                         if (!isset($TableErrorTables) || !is_array($TableErrorTables) || !in_array($this->dbname.'.'.$selectedtablename, $TableErrorTables)) {
@@ -130,9 +133,9 @@ class dbSiteTools_mysql extends dbSiteTools
 
         if (isset($TableErrorTables) && is_array($TableErrorTables)) {
             for ($t = 0; $t < count($TableErrorTables); $t++) {
-                mysql_select_db($TableErrorDB["$t"]);
-                $fixresult = mysql_query('REPAIR TABLE '.$TableErrorTables["$t"].' EXTENDED');
-                while ($fixrow = mysql_fetch_array($fixresult)) {
+                mysqli_select_db($conn, $TableErrorDB["$t"]);
+                $fixresult = mysqli_query($conn, 'REPAIR TABLE '.$TableErrorTables["$t"].' EXTENDED');
+                while ($fixrow = mysqli_fetch_array($fixresult)) {
                    $TableErrors[] = $fixrow['Table'].' ['.$fixrow['Msg_type'].'] '.$fixrow['Msg_text'];
                 }
             }
@@ -143,9 +146,10 @@ class dbSiteTools_mysql extends dbSiteTools
 
     function _bkcountoverallrows($SelectedTables,$number_of_cols)
     {
+       $conn = $this->dbconn->_connectionID;
        $overallrows=0;
        foreach ($SelectedTables as $this->dbname => $value) {
-            mysql_select_db($this->dbname);
+            mysqli_select_db($conn, $this->dbname);
             $tablecounter = 1;
             for ($t = 0; $t < count($SelectedTables["$this->dbname"]); $t++) {
                 if ($tablecounter++ < $number_of_cols) {
@@ -153,8 +157,8 @@ class dbSiteTools_mysql extends dbSiteTools
                     $tablecounter=1;
                 }
                 $SQLquery = 'SELECT COUNT(*) AS num FROM '.$SelectedTables["$this->dbname"]["$t"];
-                $result = mysql_query($SQLquery);
-                $row = mysql_fetch_array($result);
+                $result = mysqli_query($conn, $SQLquery);
+                $row = mysqli_fetch_array($result);
                 $rows["$t"] = $row['num'];
                 $overallrows += $rows["$t"];
             }
@@ -210,6 +214,7 @@ class dbSiteTools_mysql extends dbSiteTools
         $TypeEngineKey = 'Engine';//we assume mysql >= 4.0
         $bkvars['TypeEngineKey'] = $TypeEngineKey;
         $ListOfDatabasesToMaybeBackUp[] = $dbname;
+        $conn = $this->dbconn->_connectionID;
 
         //check if we have mysqldump and use that
         if ($startbackup == 'structure') {
@@ -343,7 +348,7 @@ class dbSiteTools_mysql extends dbSiteTools
                 $TableErrors = array();
                 $TableErrors =  self::_checktables($SelectedTables);
 
-                if (count($TableErrors) > 0) {
+                if (isset($TableErrors) && count($TableErrors) > 0) {
                     $tableerrormsg=xarML('TABLE ERRORS!');
                     $runningstatus[]['message']='<strong>'.$tableerrormsg.'</strong><ul><li>'.implode('</li><li>', $TableErrors).'</li></ul>';
                 }
@@ -354,16 +359,16 @@ class dbSiteTools_mysql extends dbSiteTools
                 $runningstatus[]['message']=xarML('Creating table structures for ').'<strong>'.$dbname.'</strong>'.xarML(' database tables').'<br /><br />';
                 $alltablesstructure = '';
                 foreach ($SelectedTables as $dbname => $value) {
-                    mysql_select_db($dbname);
+                    mysqli_select_db($conn, $dbname);
                     for ($t = 0; $t < count($SelectedTables[$dbname]); $t++) {
                         set_time_limit(60);
                         $runningstatus[]['message']= xarML('Creating structure for <strong> #(1) #(2)</strong>',$dbname,$SelectedTables[$dbname][$t]);
 
                         $fieldnames     = array();
                         $structurelines = array();
-                        $result = mysql_query('SHOW FIELDS FROM '.$backtickchar.$SelectedTables[$dbname][$t].$backtickchar);
+                        $result = mysqli_query($conn, 'SHOW FIELDS FROM '.$backtickchar.$SelectedTables[$dbname][$t].$backtickchar);
 
-                        while ($row = mysql_fetch_assoc($result)) {
+                        while ($row = mysqli_fetch_assoc($result)) {
                             $structureline  = $backtickchar.$row['Field'].$backtickchar;
                             $structureline .= ' '.$row['Type'];
                             $nulltype = ($row['Null'] =='NO') ? 'NOT NULL' : '';//'NULL';
@@ -397,17 +402,17 @@ class dbSiteTools_mysql extends dbSiteTools
 
                             $fieldnames[] = $row['Field'];
                         }
-                        mysql_free_result($result);
+                        mysqli_free_result($result);
 
                         $tablekeys    = array();
                         $uniquekeys   = array();
                         $fulltextkeys = array();
-                        $result = mysql_query('SHOW INDEX FROM '.$backtickchar.$SelectedTables[$dbname][$t].$backtickchar);
+                        $result = mysqli_query($conn, 'SHOW INDEX FROM '.$backtickchar.$SelectedTables[$dbname][$t].$backtickchar);
                         $INDICES = array();
-                        while ($row = mysql_fetch_assoc($result)) {
+                        while ($row = mysqli_fetch_assoc($result)) {
                             $INDICES[$row['Key_name']][$row['Seq_in_index']] = $row;
                         }
-                        mysql_free_result($result);
+                        mysqli_free_result($result);
                         foreach ($INDICES as $index_name => $columndata) {
                             $structureline  = '';
                             if ($index_name == 'PRIMARY') {
@@ -437,8 +442,8 @@ class dbSiteTools_mysql extends dbSiteTools
                             $structurelines[] = $structureline;
                         }
 
-                        $TableStatusResult = mysql_query('SHOW TABLE STATUS LIKE "'.mysql_escape_string($SelectedTables[$dbname][$t]).'"');
-                        if (!($TableStatusRow = mysql_fetch_assoc($TableStatusResult))) {
+                        $TableStatusResult = mysqli_query($conn, 'SHOW TABLE STATUS LIKE "'.mysqli_escape_string($conn, $SelectedTables[$dbname][$t]).'"');
+                        if (!($TableStatusRow = mysqli_fetch_assoc($TableStatusResult))) {
                             $runningstatus[]['message']= xarML("failed to execute 'SHOW TABLE STATUS' on #(1) #(2) ",$dbname,$tablename);
                         }
 
@@ -468,10 +473,10 @@ class dbSiteTools_mysql extends dbSiteTools
                     $processedrows    = 0;
                     foreach ($SelectedTables as $dbname => $value) {
                         set_time_limit(60);
-                        mysql_select_db($dbname);
+                        mysqli_select_db($conn, $dbname);
                         for ($t = 0; $t < count($SelectedTables[$dbname]); $t++) {
-                            $result = mysql_query('SELECT * FROM '.$SelectedTables[$dbname][$t]);
-                            $rows[$t] = mysql_num_rows($result);
+                            $result = mysqli_query($conn, 'SELECT * FROM '.$SelectedTables[$dbname][$t]);
+                            $rows[$t] = mysqli_num_rows($result);
                             if ($rows[$t] > 0) {
                                 $tabledatadumpline = '-- dumping data for '.$dbname.'.'.$SelectedTables[$dbname][$t].$lineterm;
                                 if ($dbcompresstype == 'bzip2') {
@@ -483,8 +488,8 @@ class dbSiteTools_mysql extends dbSiteTools
                                 }
                             }
                             unset($fieldnames);
-                            for ($i = 0; $i < mysql_num_fields($result); $i++) {
-                                $fieldnames[] = mysql_field_name($result, $i);
+                            for ($i = 0; $i < mysqli_num_fields($result); $i++) {
+                                $fieldnames[] = mysqli_fetch_field_direct($result, $i)->name;
                             }
                             if ($startbackup == 'complete') {
                                 $insertstatement = ($replaceinto ? 'REPLACE' : 'INSERT').' INTO '.$backtickchar.$SelectedTables[$dbname][$t].$backtickchar.' ('.$backtickchar.implode($backtickchar.', '.$backtickchar, $fieldnames).$backtickchar.') VALUES (';
@@ -493,7 +498,7 @@ class dbSiteTools_mysql extends dbSiteTools
                             }
                             $currentrow       = 0;
                             $thistableinserts = '';
-                            while ($row = mysql_fetch_array($result)) {
+                            while ($row = mysqli_fetch_array($result)) {
                                 unset($valuevalues);
                                 foreach ($fieldnames as $key => $val) {
                                     if ($row[$key] === null) {
@@ -517,7 +522,7 @@ class dbSiteTools_mysql extends dbSiteTools
                                                     }
                                                     $valuevalues[] = $hexstring;
                                                 } else {
-                                                    $valuevalues[] = $quotechar.mysql_escape_string($data).$quotechar;
+                                                    $valuevalues[] = $quotechar.mysqli_escape_string($conn, $data).$quotechar;
                                                 }
                                                 break;
 
@@ -531,7 +536,7 @@ class dbSiteTools_mysql extends dbSiteTools
                                             case 'double':
                                             case 'decimal':
                                             case 'year':
-                                                $valuevalues[] = mysql_escape_string($row[$key]);
+                                                $valuevalues[] = mysqli_escape_string($conn, $row[$key]);
                                                 break;
 
                                             // value surrounded by quotes
@@ -548,7 +553,7 @@ class dbSiteTools_mysql extends dbSiteTools
                                             case 'time':
                                             case 'timestamp':
                                             default:
-                                                $valuevalues[] = $quotechar.mysql_escape_string($row[$key]).$quotechar;
+                                                $valuevalues[] = $quotechar.mysqli_escape_string($conn, $row[$key]).$quotechar;
                                                 break;
                                         }
 

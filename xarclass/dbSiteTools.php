@@ -23,7 +23,7 @@ class dbSiteTools
     var $_database_info;
     var $dbconn;
 
-    function dbSiteTools ($dbname='',$dbtype='')
+    function __construct ($dbname='',$dbtype='')
     {
         if (empty($this->dbconn)) {
             $this->dbconn = xarDBGetConn();
