@@ -32,7 +32,7 @@ class dbSiteTools_mysqli extends dbSiteTools
         $result = @mysqli_query($conn, $local_query);
         if (@mysqli_num_rows($result)) {
             while ($row = mysqli_fetch_array($result)) {
-                if ($version>='4.1') {
+                if ($version>=4.1) {
                   $rowdata[]=array('rowname' => $row[0],
                                     'totaldata'  => $row[6],
                                     'totalidx'   => $row[8],
