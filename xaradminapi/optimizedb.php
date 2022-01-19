@@ -20,7 +20,7 @@
 function sitetools_adminapi_optimizedb($dbname,$dbtype='')
 {
     if ($dbtype=='' || !isset($dbtype)){
-        $dbtype='mysql';
+        $dbtype='mysqli';
     }
 
     // Security check  - allow scheduler api funcs to run as anon bug #2802

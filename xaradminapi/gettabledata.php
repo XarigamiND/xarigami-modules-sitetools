@@ -27,7 +27,7 @@ function sitetools_adminapi_gettabledata($dbname='', $dbtype='')
     }
 
     if ($dbtype=='' || !isset($dbtype)){
-        $dbtype='mysql';
+        $dbtype='mysqli';
     }
 
     $rowinfo=array();

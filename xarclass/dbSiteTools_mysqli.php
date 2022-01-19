@@ -26,9 +26,9 @@ class dbSiteTools_mysqli extends dbSiteTools
         $gain=0;
         $rowinfo['total_gain']=0;
         $rowinfo['total_kbs']=0;
-        $version=substr(mysqli_get_server_info(),0,3);
-        $local_query = 'SHOW TABLE STATUS FROM '.$this->dbname;
         $conn = $this->dbconn->_connectionID;
+        $version=preg_replace('/^(\d+\.\d+).*/', '$1', mysqli_get_server_info($conn));
+        $local_query = 'SHOW TABLE STATUS FROM '.$this->dbname;
         $result = @mysqli_query($conn, $local_query);
         if (@mysqli_num_rows($result)) {
             while ($row = mysqli_fetch_array($result)) {
