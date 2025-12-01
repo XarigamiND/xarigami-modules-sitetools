@@ -22,6 +22,9 @@ class dbSiteTools
     // initialize some vars
     var $_database_info;
     var $dbconn;
+    var $dbtype;
+    var $dbname;
+    var $dbhost;
 
     function __construct ($dbname='',$dbtype='')
     {
